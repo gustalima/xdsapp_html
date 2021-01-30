@@ -1,0 +1,95 @@
+
+-------------------------------------------------------------------
+
+Processing summary for data set ARwoDMSO-F2XEntry-A07a_1
+ 2020-07-03 10:37:23
+-------------------------------------------------------------------
+
+Things you may want to check:
+
+ Indexing (High no. of spots in subtree 2)
+
+
+Images in /data/fragmaxrpc/user/frag200001/raw/ARwoDMSO/ARwoDMSO-F2XEntry-A07a
+
+
+Table 1 like summary 
+-------------------------------------------------------------------
+
+    Space group                            C2 (5)                                
+    Unit cell parameters [A]               88.68 82.26 93.70 90.0 108.65 90.0    
+    Resolution limit [A]                   44.63-1.69 (1.79-1.69)                
+    No. of reflections                     489902                                
+    No. of uniques                         71323                                 
+    Multiplicity                           6.87                                  
+    I/sigI                                 16.42 (0.52)                          
+    R_meas [%]                             5.1 (402.7)                           
+    Completeness [%]                       99.8 (99.3)                           
+    B(Wilson) [A^2]                        47.82                                 
+    Mosaicity [deg]                        0.097                                 
+    CC(1/2)                                100.0 (23.5)                          
+    ISa                                    29.90                                 
+
+
+Result files generated for CCP4, CNS, SHELX
+-------------------------------------------------------------------
+                                                                                 
+    ARwoDMSO-F2XEntry-A07a_1_F.mtz                                               
+    ARwoDMSO-F2XEntry-A07a_1.hkl                                                 
+    ARwoDMSO-F2XEntry-A07a_1.cv                                                  
+
+
+Intensity checks
+-------------------------------------------------------------------
+
+    SFCHECK                                                                      
+     Perfect twinning test                 2.9560                                
+     Pseudo translation                    not detected                          
+    Phenix.xtriage                                                               
+     <I^2>/<I>                             2.149 (untwinned 2.000, perfect twin 1.500)
+     <F>^2/<F^2>                           0.770 (untwinned 0.785, perfect twin 0.885)
+     <|E^2-1|>                             0.768 (untwinned 0.736, perfect twin 0.541)
+    Pointless                                                                    
+     |L|-test                              0.479 (untwinned 0.500, perfect twin 0.375)
+     L^2-test                              0.310 (untwinned 0.333, perfect twin 0.200)
+
+
+Space group determination by Pointless
+-------------------------------------------------------------------
+
+    Selected space group                   C 1 2 1 (5)                           
+    Total probability                      0.906                                 
+    Systematic absences probability        1.000                                 
+    Next probable space group              none (-)                              
+    Total probability                      -                                     
+    Systematic absences probability        -                                     
+
+
+Indexing summary
+-------------------------------------------------------------------
+
+    No. of subtrees                        862                                   
+    No. of strong spots in root subtree    1035                                  
+    No. of strong spots in subtree 2       1024                                  
+    Quality value                          1.4                                   
+    Delta                                  0.2                                   
+    DH, DK, DL                             0.02, 0.02, 0.02                      
+    Selected origin                        0 0 0                                 
+    Computed (given) beam position         747.3, 830.8 (747.0, 828.0)           
+    Std. of spot position (refined)        0.20 (0.62)                           
+    Std. of spindle position (refined)     0.42 (0.32)                           
+    Detector distance (refined)            158.96 (158.97)                       
+    No. of spots indexed (total)           2321 (3220) (=72.1 %)                 
+
+
+Experimental settings
+-------------------------------------------------------------------
+
+    Detector used                          PILATUS MINIMUM_VALID_PIXEL_VALUE=0 OVERLOAD= 1048576 !PILATUS
+    Images processed                       1-3600                                
+    Detector distance [mm]                 158.96                                
+    Oscillation increment [deg]            0.1                                   
+    Wavelength [A]                         0.9184                                
+    Friedels law                           TRUE                                  
+
+
