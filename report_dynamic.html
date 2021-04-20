@@ -1,0 +1,1443 @@
+<html>
+  <head>
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='imgs/favicon.png') }}"
+    />
+    <title>Data Processing Report</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      body {
+        width: 80%;
+        margin: 20 auto;
+      }
+      .simple-link-btn {
+        text-decoration: none !important;
+        color: black;
+      }
+      .alert-darkgray-text {
+        color: #212629;
+      }
+      .table {
+        margin-bottom: 0 !important;
+      }
+      .table-parameter-width {
+        width: 35%;
+      }
+      .modal-dialog {
+        max-width: 70%;
+      }
+      .textarea-read {
+        resize: none;
+        width: 100%;
+        height: calc(100vh - 125px);
+        background-color: #e7eaff;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Title -->
+    <h2><span id="report-name-title"></span> Report</h2>
+    <h5><span id="dataset-title"></span></h5>
+    <h6><span id="dataset-process-date"></span></h6>
+
+    <!-- Collapsible itens -->
+    <div class="accordion" id="accordionBox1">
+      <div class="card my-2 border-bottom rounded">
+        <div class="card-header" id="headingZero">
+          <h2 class="mb-0">
+            <a
+              class="btn btn-link btn-block text-left collapsed simple-link-btn"
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseZero"
+              aria-expanded="false"
+              aria-controls="collapseZero"
+            >
+              Setup
+            </a>
+          </h2>
+        </div>
+        <div
+          id="collapseZero"
+          class="collapse"
+          aria-labelledby="headingZero"
+          data-parent="#accordionBox1"
+        >
+          <div class="card-body">
+            <!-- Button trigger modal -->
+            <button
+              id="open-process-log"
+              type="button"
+              class="btn btn-primary mb-3"
+              data-toggle="modal"
+              data-target="#dataprocessLog"
+            >
+              Process log
+            </button>
+
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text"
+            >
+              <b>Images: </b> <span id="images-location"> </span>
+            </div>
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text"
+            >
+              <b>Original images: </b>
+              <span id="original-images-location"> </span>
+            </div>
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text"
+            >
+              <b>MTZ out: </b> <span id="mtz-location"> </span>
+            </div>
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text"
+            >
+              <b>Original MTZ out: </b>
+              <span id="original-mtz-location"> </span>
+            </div>
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text"
+            >
+              <b>Prepare software cmd: </b> <span id="prepare-sw-cmd"> </span>
+            </div>
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text d-none"
+            >
+              <b>Phenix version:</b> <span id="phenix-version"></span>
+            </div>
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text d-none"
+            >
+              <b>Pointless version:</b> <span id="pointless-version"></span>
+            </div>
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text d-none"
+            >
+              <b>XDSAPP version: </b> <span id="xdsapp-version"> </span>
+            </div>
+            <div
+              class="alert alert-light border rounded bg-light alert-darkgray-text"
+            >
+              <b>XDS version:</b> <span id="xds-version"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion" id="accordionBox2">
+      <div class="card my-2 border-bottom rounded">
+        <div class="card-header" id="headingOne">
+          <h2 class="mb-0">
+            <a
+              class="btn btn-link btn-block text-left collapsed simple-link-btn"
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseOne"
+              aria-expanded="false"
+              aria-controls="collapseOne"
+            >
+              Overall
+            </a>
+          </h2>
+        </div>
+
+        <div
+          id="collapseOne"
+          class="collapse show"
+          aria-labelledby="headingOne"
+          data-parent="#accordionBox2"
+        >
+          <div class="card-body">
+            <h4>Table 1 like summary</h4>
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <th scope="col">Space group</th>
+                  <td id="overall-spg"></td>
+                </tr>
+                <tr>
+                  <th scope="col">Unit cell parameters [A]</th>
+                  <td id="overall-cell"></td>
+                </tr>
+                <tr>
+                  <th scope="col">Resolution limit [A]</th>
+                  <td id="overall-resolution"></td>
+                </tr>
+                <tr>
+                  <th scope="col">No. of reflections</th>
+                  <td id="overall-reflections"></td>
+                </tr>
+                <tr>
+                  <th scope="col">No. of uniques</th>
+                  <td id="overall-uniques"></td>
+                </tr>
+                <tr>
+                  <th scope="col">Multiplicity</th>
+                  <td id="overall-multiplicity"></td>
+                </tr>
+                <tr>
+                  <th scope="col">I/sigI</th>
+                  <td id="overall-isigi"></td>
+                </tr>
+                <tr>
+                  <th scope="col">R_meas [%]</th>
+                  <td id="overall-rmeas"></td>
+                </tr>
+                <tr>
+                  <th scope="col">Completeness [%]</th>
+                  <td id="overall-completeness"></td>
+                </tr>
+                <tr>
+                  <th scope="col">B(Wilson) [A^2]</th>
+                  <td id="overall-bwilson"></td>
+                </tr>
+                <tr>
+                  <th scope="col">Mosaicity [deg]</th>
+                  <td id="overall-mosaicity"></td>
+                </tr>
+                <tr>
+                  <th scope="col">CC(1/2)</th>
+                  <td id="overall-cc12"></td>
+                </tr>
+                <tr>
+                  <th scope="col">ISa</th>
+                  <td id="overall-isa"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion" id="accordionBox3">
+      <div class="card my-2 border-bottom rounded">
+        <div class="card-header" id="headingTwo">
+          <h2 class="mb-0">
+            <a
+              class="btn btn-link btn-block text-left collapsed simple-link-btn"
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseTwo"
+              aria-expanded="false"
+              aria-controls="collapseTwo"
+            >
+              Summary
+            </a>
+          </h2>
+        </div>
+        <div
+          id="collapseTwo"
+          class="collapse show"
+          aria-labelledby="headingTwo"
+          data-parent="#accordionBox3"
+        >
+          <div class="card-body">
+            <!-- Inner card  -->
+            <div class="card my-3" id="statistics-table-container">
+              <div class="card-header">Statistics table</div>
+              <div id="statistics-table"></div>
+            </div>
+            <!-- End of Inner card  -->
+            <!-- Inner card  -->
+            <div class="card my-3" id="intensity-check-container">
+              <div class="card-header">Intensity checks</div>
+              <div class="card-body">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr class="table-secondary">
+                      <th scope="col" colspan="2">
+                        <span id="truncate-name">Ctruncate</span>
+                        <button
+                          class="btn btn-small btn-warning ml-4"
+                          type="button"
+                          data-toggle="modal"
+                          data-target="#ctruncateLog"
+                          id="open-ctruncate-log"
+                        >
+                          Open Log
+                        </button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="ctruncate-table-container">
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Perfect twinning test
+                      </th>
+                      <td id="sfcheck-twinning-test"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Pseudo translation
+                      </th>
+                      <td id="sfcheck-pseudo-translation"></td>
+                    </tr>
+                  </tbody>
+                  <thead>
+                    <tr class="table-secondary">
+                      <th scope="col" colspan="2">
+                        <span id="data-quality-name"></span>
+                        <button
+                          class="btn btn-small btn-warning ml-4"
+                          type="button"
+                          data-toggle="modal"
+                          data-target="#qualityLog"
+                          id="open-quality-log"
+                        >
+                          Open Log
+                        </button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="quality-table-container">
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        &lt;I^2&gt;/&lt;I&gt;
+                      </th>
+                      <td id="quality-i2overi"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        &lt;F&gt;^2/&lt;F^2&gt;
+                      </th>
+                      <td id="quality-f2overf2"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        &lt;|E^2-1|&gt;
+                      </th>
+                      <td id="quality-e2minus1"></td>
+                    </tr>
+                  </tbody>
+                  <thead>
+                    <tr class="table-secondary">
+                      <th scope="col" colspan="2">
+                        Pointless
+                        <button
+                          class="btn btn-small btn-warning ml-4"
+                          type="button"
+                          data-toggle="modal"
+                          data-target="#pointlessLog"
+                          id="open-pointless-log"
+                        >
+                          Open Log
+                        </button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="pointless-table-container">
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        |L|-test
+                      </th>
+                      <td id="pointless-ltest"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        L^2-test
+                      </th>
+                      <td id="pointless-l2test"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- End of Inner card  -->
+            <!-- Inner card  -->
+            <div class="card my-3 d-none">
+              <div class="card-header">
+                Space group determination by Pointless
+              </div>
+              <div class="card-body">
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Selected space group
+                      </th>
+                      <td id="pointless-spg"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Total probability
+                      </th>
+                      <td id="pointless-totalprob"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Systematic absences probability
+                      </th>
+                      <td id="pointless-systematicabs"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Next probable space group
+                      </th>
+                      <td id="pointless-nextprobspg"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Total probability
+                      </th>
+                      <td id="pointless-totalprob"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Systematic absences probability
+                      </th>
+                      <td id="pointless-systematicabsprobtotal"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- End of Inner card  -->
+            <!-- Inner card  -->
+            <div class="card my-3" id="indexing-summary-table">
+              <div class="card-header">Indexing summary</div>
+              <div class="card-body">
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        No. of subtrees
+                      </th>
+                      <td id="indexing-summary-subtrees"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        No. of strong spots in root subtree
+                      </th>
+                      <td id="indexing-summary-strongspotsroot"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        No. of strong spots in subtree 2
+                      </th>
+                      <td id="indexing-summary-strongspotssubtree"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Quality value
+                      </th>
+                      <td id="indexing-summary-qualityvalue"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">Delta</th>
+                      <td id="indexing-summary-delta"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        DH, DK, DL
+                      </th>
+                      <td id="indexing-summary-dhdkdl"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Selected origin
+                      </th>
+                      <td id="indexing-summary-selectedorigin"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Computed (given) beam position
+                      </th>
+                      <td id="indexing-summary-computedbeampos"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Std. of spot position (refined)
+                      </th>
+                      <td id="indexing-summary-stdspot"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Std. of spindle position (refined)
+                      </th>
+                      <td id="indexing-summary-stdspindle"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Detector distance (refined)
+                      </th>
+                      <td id="indexing-summary-detectordistance"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        No. of spots indexed (total)
+                      </th>
+                      <td id="indexing-summary-spotsindexed"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- End of Inner card  -->
+            <!-- Inner card  -->
+            <div class="card my-3">
+              <div class="card-header">Experimental settings</div>
+              <div class="card-body">
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Detector used
+                      </th>
+                      <td id="experimental-detectormodel"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Images processed
+                      </th>
+                      <td id="experimental-imagesprocessed"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Detector distance [mm]
+                      </th>
+                      <td id="experimental-detectordistance"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Oscillation increment [deg]
+                      </th>
+                      <td id="experimental-axisrange"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Wavelength [A]
+                      </th>
+                      <td id="experimental-wavelength"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="table-parameter-width">
+                        Friedels law
+                      </th>
+                      <td id="experimental-friedelslaw"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- End of Inner card  -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion" id="accordionBox4">
+      <div class="card my-2 border-bottom rounded">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+            <a
+              class="btn btn-link btn-block text-left collapsed simple-link-btn"
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseThree"
+              aria-expanded="false"
+              aria-controls="collapseThree"
+            >
+              Plots
+            </a>
+          </h2>
+        </div>
+        <div
+          id="collapseThree"
+          class="collapse"
+          aria-labelledby="headingThree"
+          data-parent="#accordionBox4"
+        >
+          <div class="card-body">N/A</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal XDSAPP Log-->
+    <div
+      class="modal fade"
+      id="dataprocessLog"
+      tabindex="-1"
+      aria-labelledby="dataprocessLogLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h4>AUTOPROCESS LOG</h4>
+            <pre class="textarea-read" id="process-logfile" readonly></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Data Quality-->
+    <div
+      class="modal fade"
+      id="qualityLog"
+      tabindex="-1"
+      aria-labelledby="qualityLogLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h4 id="data-quality-name-modal"></h4>
+            <pre class="textarea-read" id="quality-logfile" readonly></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End -->
+    <!-- Modal Pointless-->
+    <div
+      class="modal fade"
+      id="pointlessLog"
+      tabindex="-1"
+      aria-labelledby="pointlessLogLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h4>Pointless</h4>
+            <pre class="textarea-read" id="pointless-logfile" readonly></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End -->
+
+    <!-- Modal CTruncate-->
+    <div
+      class="modal fade"
+      id="ctruncateLog"
+      tabindex="-1"
+      aria-labelledby="ctruncateLogLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h4>CTruncate</h4>
+            <pre class="textarea-read" id="ctruncate-logfile" readonly></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End -->
+  </body>
+
+  <script>
+    crystal = {{crystal|tojson}} // crystal information from DB
+    html_content = {{html_content|tojson}} // log file splitted by line
+    support_files = {{support_files|tojson}}
+    support_files_content = {}
+    for (let fpath of Object.keys(support_files).slice(0,-1)) {
+      readFileSafe(support_files[fpath],)
+    }
+    if (Object.keys(crystal).length != 0) {
+      $("#report-name-title").html("{{crystal.software}}")
+      pipeline = "{{crystal.software}}"
+      data = crystal
+    }
+    if (Object.keys(html_content).length != 0) {
+      pipeline = html_content.slice(-1)[0].split(": ").slice(-1)[0]
+      $("#report-name-title").html(`${pipeline}`)
+      data = html_content
+    }
+
+    $("#data-quality-name").html(support_files.quality_name)
+    $("#data-quality-name-modal").html(support_files.quality_name)
+
+    sfcheckLog = ``
+    pointlessLog = ``
+    xtriageLog = ``
+    dataprocessLog = ``
+    overallTable = {
+
+      "overall-spg": `${parseSpacegroup(pipeline, data)}`,
+      "overall-cell": `${parseCellParameters(pipeline, data)}`,
+      "overall-resolution": `${parseResolutionLimits(pipeline, data)}`,
+      "overall-reflections": `${parseReflections(pipeline, data)}`,
+      "overall-uniques": `${parseUniqueReflections(pipeline, data)}`,
+      "overall-multiplicity": `${parseMultiplicity(pipeline, data)}`,
+      "overall-isigi": `${parseIsigI(pipeline, data)}`,
+      "overall-rmeas": `${parseRmeas(pipeline, data)}`,
+      "overall-completeness": `${parseCompleteness(pipeline, data)}`,
+      "overall-bwilson": `${parseBWilson(pipeline, data)}`,
+      "overall-mosaicity": `${parseMosaicity(pipeline, data)}`,
+      "overall-cc12": `${parseCC12(pipeline, data)}`,
+      "overall-isa": `${parseISa(pipeline, data)}`,
+      "dataset-title": `${parseDatasetTitle(pipeline, data)}`,
+      "dataset-process-date": "{{crystal.collection_date}}",
+      "xdsapp-version": "",
+      "sfcheck-version": "/Vers 7.05.03; 04.06.2019/",
+      "xds-version": "",
+      "pointless-version": "version 1.12.1 : 04/12/19",
+      "phenix-version": "",
+      "original-images-location":"{{crystal.rawdata_originalfilename}}",
+      "mtz-location":"{{crystal.mtzfile}}",
+      "original-mtz-location":"{{crystal.mtzfile_originalfilename}}",
+      "images-location":
+        "{{crystal.rawdata}}",
+      "sfcheck-twinning-test": `${parseSFTwinningTest(pipeline, data)}`,
+      "sfcheck-pseudo-translation": `${parseSFPseudoTranslation(pipeline, data)}`,
+      "quality-i2overi": `${parsePhenixI2i(pipeline, data)}`,
+      "quality-f2overf2": `${parsePhenixF2f(pipeline, data)}`,
+      "quality-e2minus1": `${parsePhenixE2(pipeline, data)}`,
+      "pointless-ltest": `${parsePointlessLtest(pipeline, data)}`,
+      "pointless-l2test": `${parsePointlessL2test(pipeline, data)}`,
+      "pointless-spg": "=",
+      "pointless-totalprob": "-",
+      "pointless-systematicabs": "-",
+      "pointless-nextprobspg": "-",
+      "pointless-totalprob": "-",
+      "pointless-systematicabsprobtotal": "-",
+      "indexing-summary-subtrees": `${parseIndexingSubtress(pipeline, data)}`,
+      "indexing-summary-strongspotsroot": `${parseIndexingStrongSpotsRoot(pipeline, data)}`,
+      "indexing-summary-strongspotssubtree": `${parseIndexingStrongSpotsSubtree(pipeline, data)}`,
+      "indexing-summary-qualityvalue": `${parseIndexingQualityValue(pipeline, data)}`,
+      "indexing-summary-delta": `${parseIndexingDelta(pipeline, data)}`,
+      "indexing-summary-dhdkdl": `${parseIndexingDHDKDL(pipeline, data)}`,
+      "indexing-summary-selectedorigin": `${parseIndexingSelectedOrigin(pipeline, data)}`,
+      "indexing-summary-computedbeampos": `${parseIndexingBeamPos(pipeline, data)}`,
+      "indexing-summary-stdspot": `${parseIndexingSpotPos(pipeline, data)}`,
+      "indexing-summary-stdspindle": `${parseIndexingSpindlePos(pipeline, data)}`,
+      "indexing-summary-detectordistance": `${parseIndexingDetectorDistance(pipeline, data)}`,
+      "indexing-summary-spotsindexed": `${parseIndexingSpotsIndexed(pipeline, data)}`,
+      "experimental-detectormodel": `${parseExperimentalDetector(pipeline, data)}`,
+      "experimental-imagesprocessed": `${parseExperimentalNumImg(pipeline, data)}`,
+      "experimental-detectordistance": `${parseExperimentalDetectorDistance(pipeline, data)}`,
+      "experimental-axisrange": `${parseExperimentalOscillation(pipeline, data)}`,
+      "experimental-wavelength": `${parseExperimentalWavelength(pipeline, data)}`,
+      "experimental-friedelslaw": `${parseExperimentalFriedel(pipeline, data)}`,
+      "statistics-table":makeStatsTable("{{crystal.data_stats_table}}"),
+      "xds-version": `${parseXDSversion(pipeline,data)}`
+    };
+
+    for (let [key, value] of Object.entries(overallTable)) {
+      $(`#${key}`).html(value);
+    }
+    function makeStatsTable(data) {
+      function makeTR(line) {
+        k = []
+        for (let el of line.split(" ")) { k.push(`<td>${el}</td>`) }
+        return "<tbody><tr>"+k.join("")+"</tr></tbody>"
+      }
+      function makeTRhead(line) {
+        k = []
+        for (let el of line.split(" ")) { k.push(`<th>${el}</th>`) }
+        return "<thead><tr>"+k.join("")+"</tr></thead>"
+      }
+      trs = []
+
+      dataFrame = []
+
+      let row = data.split("; ").slice(0,1)[0]
+      trs.push(makeTRhead(row))
+      for (let row of data.split("; ").slice(1,)) {
+        trs.push(makeTR(row))
+        dataFrame.push(row.split(" "))
+      }
+      return `<table class="table w-100 table-hover table-sm text-center">${trs.join("")}<table>`
+
+    }
+
+
+    function parseDatasetTitle(pipeline, data) {
+      return "{{crystal.protein}}_{{crystal.crystalid}}"
+    }
+
+    function parseXDSversion(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return ``
+      }
+      if (pipeline == "XDSAPP" ) {
+        return ``
+
+        //return findInFile("***** XDS *****", data).split(" ").slice(18,).join(" ")
+      }
+      if (pipeline.includes("grenades")) {
+        if (support_files_content.hasOwnProperty(support_files["process_log"])) {
+          let xds_version = findInFile("***** XDS *****", support_files_content[support_files["process_log"]]).replace("***** XDS ***** ","")
+          $("#xds-version").html(xds_version)
+        } else {
+          setTimeout( function() {
+            parseXDSversion(pipeline, data)
+          }, 250)
+        }
+      }
+
+
+
+    }
+
+    function controlVisibility(pipeline) {
+      if (pipeline == "XDS+Aimless") {
+
+        $("#indexing-summary-table").addClass("d-none")
+        $("#intensity-check-container").addClass("d-none")
+
+      }
+      if (pipeline == "XDSAPP" ) {
+        $("#statistics-table-container").addClass("d-none")
+        $("#truncate-name").html("SFCHECK")
+      }
+      if (pipeline.includes("grenades")) {
+        $("#statistics-table-container").addClass("d-none")
+        $("#ctruncate-table-container").addClass("d-none")
+        $("#quality-table-container").addClass("d-none")
+        $("#pointless-table-container").addClass("d-none")
+        $("#indexing-summary-table").addClass("d-none")
+
+      }
+    }
+    controlVisibility(pipeline)
+    function parseSpacegroup(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.spacegroup}}"
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Space group", data).split(" ").slice(-2).join(" ")
+
+      }
+      if (pipeline.includes("grenades")) {
+        return findInFile("Space group: ", data).split(" ").slice(2,).join("")
+
+      }
+    }
+
+    function parseCellParameters(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return `{{crystal.a}}, {{crystal.b}}, {{crystal.c}}, {{crystal.alpha}}, {{crystal.beta}}, {{crystal.gamma}}`
+      }
+      if (pipeline.includes("grenades")) {
+        return findInFile("Average unit cell:", data).split(" ").slice(3,).filter(function(e){return e}).join(", ")
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Unit cell parameters [A]", data).split(" ").slice(18,).join(" ")
+
+      }
+    }
+
+    function parseResolutionLimits(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.resolo}} - {{crystal.resohi}}"
+      }
+      if (pipeline.includes("grenades")) {
+        return findInFile("Resolution range for run:", data).split(" ").slice(4,).filter(function(e){return e}).join(" - ")
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Resolution limit [A]", data).split(" ").slice(21,).join(" ")
+
+      }
+    }
+
+    function parseReflections(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        dataFrame = []
+        for (let row of data.data_stats_table.split("; ").slice(1,)) {
+          dataFrame.push(row.split(" "))
+        }
+        nReflections = 0
+        for (let row of dataFrame) {
+            nReflections += parseInt(row[1])
+        }
+        return nReflections
+      }
+      if (pipeline.includes("grenades")) {
+        return findInFile("Number of unique reflections", data).split(" ").slice(-1)[0]
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("No. of reflections", data).split(" ").slice(-1)[0]
+
+      }
+    }
+
+    function parseUniqueReflections(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        dataFrame = []
+        for (let row of data.data_stats_table.split("; ").slice(1,)) {
+
+          dataFrame.push(row.split(" "))
+        }
+
+        nUniqueReflections = 0
+        for (let row of dataFrame) {
+            nUniqueReflections += parseInt(row[2])
+        }
+        return nUniqueReflections
+      }
+      if (pipeline.includes("grenades")) {
+        return findInFile("Number of observations", data).split(" ").slice(-1)[0]
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("No. of uniques", data).split(" ").slice(-1)[0]
+
+      }
+    }
+
+    function parseMultiplicity(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.multiplicity}}"
+      }
+      if (pipeline.includes("grenades")) {
+        return findInFile("Multiplicity    ", data).split(" ").slice(2,).filter(function(e){return e})[0]
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Multiplicity", data).split(" ").slice(-1)[0]
+
+      }
+    }
+
+    function parseIsigI(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.isigi}} ({{crystal.isigi_shell}})"
+      }
+      if (pipeline.includes("grenades")) {
+        let r = findInFile("Mean((I)/sd(I))     ", data).split(" ").slice(2,).filter(function(e){return e})
+        return `${r[0]} (${r[2]})`
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("I/sigI", data).split(" ").slice(-2).join(" ")
+
+      }
+    }
+
+    function parseRmeas(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        let r = findInFile("Rmeas (within I+/I-)     ", data).split(" ").slice(3,).filter(function(e){return e})
+        return `${(r[0]*100).toFixed(1)} (${(r[2]*100).toFixed(1)})`
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("R_meas [%]", data).split(" ").slice(-2).join(" ")
+      }
+    }
+
+    function parseCompleteness(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.completeness}} ({{crystal.completeness_shell}})"
+      }
+      if (pipeline.includes("grenades")) {
+        let r = findInFile("Completeness     ", data).split(" ").slice(3,).filter(function(e){return e})
+        return `${r[0]} (${r[2]})`
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Completeness", data).split(" ").slice(-2).join(" ")
+      }
+    }
+
+    function parseBWilson(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.b_wilson}}"
+      }
+      if (pipeline.includes("grenades")) {
+        if (support_files_content.hasOwnProperty(support_files["ctruncate_log"])) {
+          let BWilson = findInFile("Estimate of Wilson B factor:", support_files_content[support_files["ctruncate_log"]]).split(":").slice(-1)[0].split("A^")[0]
+          $("#overall-bwilson").html(BWilson)
+        } else {
+          setTimeout( function() {
+            parseBWilson(pipeline, data)
+          }, 250)
+        }
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("B(Wilson)", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseMosaicity(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.mos}}"
+      }
+      if (pipeline.includes("grenades")) {
+        return findInFile("Average mosaicity:", data).split(" ").slice(3,).filter(function(e){return e})[0]
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Mosaicity", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseCC12(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        let r = findInFile("Mn(I) half-set correlation CC(1/2)     ", data).split(" ").slice(5,).filter(function(e){return e})
+        return `${r[0]} (${r[2]})`
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("CC(1/2)", data).split(" ").slice(-2).join(" ")
+      }
+    }
+
+    function parseISa(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        if (support_files_content.hasOwnProperty(support_files["process_log"])) {
+          let ISa = findInFile2("a        b          ISa", support_files_content[support_files["process_log"]]).split(" ").slice(-1)[0]
+          $("#overall-isa").html(ISa)
+        } else {
+          setTimeout( function() {
+            parseISa(pipeline, data)
+          }, 250)
+        }
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("ISa", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseSFTwinningTest(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Perfect twinning test", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseSFPseudoTranslation(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Pseudo translation", data).split(" ").slice(-2).join(" ")
+      }
+    }
+
+    function parsePhenixI2i(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("<I^2>/<I>", data).split(" ").slice(29,).join(" ")
+      }
+    }
+
+    function parsePhenixF2f(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("<F>^2/<F^2>", data).split(" ").slice(27,).join(" ")
+      }
+    }
+
+    function parsePhenixE2(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("<|E^2-1|>", data).split(" ").slice(29,).join(" ")
+      }
+    }
+
+    function parsePointlessLtest(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        let ltest = findInFile("|L|-test", data).split(" ").slice(-1)[0]
+        if (ltest == "|L|-test") {
+          return ""
+        }
+        return ltest
+      }
+    }
+
+    function parsePointlessL2test(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        let ltest2 = findInFile("L^2-test", data).split(" ").slice(-1)[0]
+        if (ltest2 == "L^2-test") {
+          return ""
+        }
+        return ltest2
+      }
+    }
+
+    function parseIndexingSubtress(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("No. of subtrees", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseIndexingStrongSpotsRoot(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("No of strong spots in root subtree", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseIndexingStrongSpotsSubtree(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("No. of strong spots in subtree 2", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseIndexingQualityValue(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Quality value", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseIndexingDelta(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Delta", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseIndexingDHDKDL(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("DH, DK, DL", data).split(" ").slice(31,).join(" ")
+      }
+    }
+
+    function parseIndexingSelectedOrigin(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Selected origin", data).split(" ").slice(25,).join(" ")
+      }
+    }
+
+    function parseIndexingBeamPos(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Computed (given) beam position", data).split(" ").slice(12,).join(" ")
+      }
+    }
+
+    function parseIndexingSpotPos(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Std. of spot position (refined)", data).split(" ").slice(12,).join(" ")
+      }
+    }
+
+    function parseIndexingSpindlePos(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Std. of spindle position (refined)", data).split(" ").slice(9,).join(" ")
+      }
+    }
+
+    function parseIndexingDetectorDistance(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Detector distance (refined)", data).split(" ").slice(14,).join(" ")
+      }
+    }
+
+    function parseIndexingSpotsIndexed(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "---"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("No. of spots indexed (total)", data).split(" ").slice(15,).join(" ")
+      }
+    }
+
+    function parseExperimentalUserSPG(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "1-{{crystal.number_images}}"
+      }
+      if (pipeline.includes("grenades")) {
+        return ""
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Space group number given by user:", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseExperimentalDetector(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.detector}}"
+      }
+      if (pipeline.includes("grenades")) {
+        if (support_files_content.hasOwnProperty(support_files["pointless_log"])) {
+          let detector = findInFile("!DETECTOR=", support_files_content[support_files["pointless_log"]]).split("=")[1]
+          $("#experimental-detectormodel").html(detector)
+        } else {
+          setTimeout( function() {
+            parseExperimentalDetector(pipeline, data)
+          }, 250)
+        }
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Detector used", data).split(" ").slice(27,).join(" ")
+      }
+    }
+
+    function parseExperimentalNumImg(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "1-{{crystal.number_images}}"
+      }
+      if (pipeline.includes("grenades")) {
+        return findInFile("consists of batches", data).split(" ").slice(-1)[0]
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Images processed", data).split(" ").slice(24,).join(" ")
+
+      }
+    }
+
+    function parseExperimentalDetectorDistance(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.distance}}"
+      }
+      if (pipeline.includes("grenades")) {
+        if (support_files_content.hasOwnProperty(support_files["pointless_log"])) {
+          let detector = findInFile("!DETECTOR_DISTANCE=", support_files_content[support_files["pointless_log"]]).split("=")[1]
+          $("#experimental-detectordistance").html(detector)
+        } else {
+          setTimeout( function() {
+            parseExperimentalDetectorDistance(pipeline, data)
+          }, 250)
+        }
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Detector distance [mm]", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseExperimentalOscillation(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        let n = "{{crystal.osc_range}}"
+        let m = "{{crystal.number_images}}"
+        let osc = parseInt(n)/parseInt(m)
+        return `${osc}`
+      }
+      if (pipeline.includes("grenades")) {
+        if (support_files_content.hasOwnProperty(support_files["pointless_log"])) {
+          let detector = findInFile("!OSCILLATION_RANGE=", support_files_content[support_files["pointless_log"]]).split("=")[1]
+          $("#experimental-axisrange").html(detector)
+        } else {
+          setTimeout( function() {
+            parseExperimentalOscillation(pipeline, data)
+          }, 250)
+        }
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Oscillation increment [deg]", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseExperimentalWavelength(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "{{crystal.wavelength}}"
+      }
+      if (pipeline.includes("grenades")) {
+        if (support_files_content.hasOwnProperty(support_files["pointless_log"])) {
+          let detector = findInFile("!X-RAY_WAVELENGTH=", support_files_content[support_files["pointless_log"]]).split("=")[1]
+          $("#experimental-wavelength").html(detector)
+        } else {
+          setTimeout( function() {
+            parseExperimentalWavelength(pipeline, data)
+          }, 250)
+        }
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Wavelength [A]", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function parseExperimentalFriedel(pipeline, data) {
+      if (pipeline == "XDS+Aimless") {
+        return "TRUE"
+      }
+      if (pipeline.includes("grenades")) {
+        if (support_files_content.hasOwnProperty(support_files["pointless_log"])) {
+          let detector = findInFile("!FORMAT=", support_files_content[support_files["pointless_log"]]).split(" ").slice(-1)[0].split("=")[1]
+          $("#experimental-friedelslaw").html(detector)
+        } else {
+          setTimeout( function() {
+            parseExperimentalFriedel(pipeline, data)
+          }, 250)
+        }
+      }
+      if (pipeline == "XDSAPP" ) {
+        return findInFile("Friedels law", data).split(" ").slice(-1)[0]
+      }
+    }
+
+    function findInFile(parameter, fileContent) {
+
+      if (typeof(fileContent) == "string") {
+        fileContent = fileContent.match(/[^\r\n]+/g);
+      }
+      for (let line of fileContent) {
+        line = line.trim()
+        if (line.includes(parameter)) {
+          return line
+        }
+      }
+
+    }
+
+    function findInFile2(parameter, fileContent) {
+
+      if (typeof(fileContent) == "string") {
+        fileContent = fileContent.match(/[^\r\n]+/g);
+      }
+      for (let lineNumber in fileContent) {
+        line = fileContent[lineNumber].trim()
+        if (line.includes(parameter)) {
+          return fileContent[parseInt(lineNumber)+1]
+        }
+      }
+
+    }
+
+    function readFileSafe(fpath, targetField) {
+
+      if (support_files_content.hasOwnProperty(fpath)) {
+        data = support_files_content[fpath]
+        if (targetField) {
+          $(`#${targetField}`).html(data)
+        }
+        return
+      }
+      $.ajax({
+        dataType: 'json',
+        data: { file_path: JSON.stringify(fpath) },
+        type: 'POST',
+        url: `{{ url_for('routes.open_file_safe')}}`,
+        success: function (data) {
+
+          support_files_content[fpath] = data
+          if (targetField) {
+            $(`#${targetField}`).html(data)
+          }
+        },
+      })
+    }
+
+    $("#open-pointless-log").on("click", function() {
+      readFileSafe(support_files.pointless_log, "pointless-logfile")
+    } )
+
+
+    $("#open-quality-log").on("click", function() {
+      readFileSafe(support_files.quality_log, "quality-logfile")
+    } )
+
+    $("#open-process-log").on("click", function() {
+      readFileSafe(support_files.process_log, "process-logfile")
+    } )
+
+    $("#open-ctruncate-log").on("click", function() {
+      readFileSafe(support_files.ctruncate_log, "ctruncate-logfile")
+    } )
+  </script>
+</html>
